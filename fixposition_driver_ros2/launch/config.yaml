@@ -4,7 +4,7 @@
         # - Serial (<device>:<baudrate>)
         # stream: serial:///dev/ttyUSB0:115200
         # - TCP client (<ip_address>:<port>)
-        stream: tcpcli://10.0.2.1:21000
+        stream: tcpcli://192.168.42.50:21000
         # Wait time in [s] to attempt reconnecting after connection lost
         reconnect_delay: 5.0
         # Delay warning threshold [s]. Note that this only works if your system time is synced to the VRTK2. This must be a float.
@@ -54,19 +54,19 @@
         nmea_epoch:   "GNSS"   # Choice for NMEA collection, must match NMEA message configuration type (<epoch> above), "" to disable
         raw_output:   false    # Enable raw messages output
         cov_warning:  false    # Enable covariance warnings
-        nav2_mode:    false    # Enable nav2 mode
+        nav2_mode:    true     # Enable nav2 mode: map->odom->vrtk_link TF + /fixposition/datum
 
         converter:
-            enabled: false
-            topic_type: "Twist"        # Supported types: nav_msgs/{Twist, TwistWithCov, Odometry}
-            input_topic: "/robot/odom" # Input topic name
+            enabled: true              # Ranger wheel speed -> VRTK2 (also enable wheelspeed in the web UI)
+            topic_type: "Odometry"       # Supported types: nav_msgs/{Twist, TwistWithCov, Odometry}
+            input_topic: "/odom"       # Input topic name
             scale_factor: 1000.0       # To convert from the original unit of measurement to mm/s (note: this must be a float!)
             use_x: true                # Transmit the x axis of the input velocity
-            use_y: false               # Transmit the y axis of the input velocity
-            use_z: false               # Transmit the z axis of the input velocity
+            use_y: false           # Transmit the y axis of the input velocity
+            use_z: true               # Transmit the z axis of the input velocity
 
         # Node parameters
         output_ns:   "/fixposition"              # Namespace for output topics, leave empty to use node namespace
         speed_topic: "/fixposition/speed"        # Wheelspeed input, empty to disable
         corr_topic:  "/rtcm"                     # Correction data input, empty to disable
-        qos_type:    "sensor_short"              # "sensor_short", "sensor_long", "default_short", "default_long"
+        qos_type:    "default_long"              # "sensor_short", "sensor_long", "default_short", "default_long"
